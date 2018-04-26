@@ -1,12 +1,12 @@
 # Raspberry Cam
 
-- eka
-- toka
-- kolmas
+The aim of this project is to follow weather by displaying a real-time photo of the sky at Hakaniemi, Helsinki.
 
-`kooodia tässä näin`
+- The photos are taken once in every minute.
+- The photos can be found in:
+
+`some code here`
 
 ```
-superkoodi
-mikämikä
+many lines of code here
 ```
