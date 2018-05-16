@@ -6,7 +6,7 @@
 while true
 do
 raspistill -o image.jpg
-gsutil cp image.jpg gs://raspberry_pi_riikka
+gsutil -h "Cache-Control:no-cache" cp image.jpg gs://raspberry_pi_riikka
 gsutil acl ch -u AllUsers:R gs://raspberry_pi_riikka/image.jpg
 sleep 1m
 done
