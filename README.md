@@ -8,7 +8,7 @@ Roughly the steps are the following (below we will go through each step in more 
 
 1. Download the operating system Raspbian to the SD card.
 2. Connect your computer to Raspberry Pi via SSH and enable the camera.
-3. Create a new project in your Google Cloud account.
+3. Create a new project to your Google Cloud account.
 4. Resources and adding them to your GC bucket.
 
 
@@ -36,29 +36,72 @@ you will get the Raspberry Pi Software Configuration Tool. There you should
  1. change the default password to your own,
  2. enable the camera.
 
- ```
- sudo apt-get install rpi-update ???
- sudo apt-get rpi-update ???
- sudo reboot pi ???```
 
-3. Create a new project in your Google Cloud account and a bucket therein (of the names of your choice).
 
-4. You can copy the files index.html and webcam.sh from..
+3. Create a new project in your Google Cloud account.
+4. Clone this repository to your computer. Modify the install.sh by adding the GCP project name and your local directory name to it. Run install.sh on your terminal OR follow the instructions in 4* below.
 
+4*. Alternatively you can run the commands of install.sh one by one as follows.
+
+4*.a. First, we create a bucket to your GCP project by:
+```
+gsutil mb -l eu -p <project name> <bucket name>
+```
+NOTE: Your bucket name should be of the following form: gs://<project name>-bucket. For instance, if your project name is *supercool-raspberry-pi-webcam*, then replace bucket name by *gs://supercool-raspberry-pi-webcam-bucket*.
+
+4*.b. The next command enables your project to use source repository (this should not cost anything).
 
 ```
-chmod +x webcam.sh
-./webcam.sh
+gcloud services enable sourcerepo.googleapis.com
+```
+
+4*.c. Create a new source repository for the files by:
+```
+gcloud source repos create <raspberry-webcam-repo>
+```
+You can name the repository as you wish.
+
+4*.d. Authenticate git with gcloud by the command (make sure you are in your local directory for Raspberry):
+
+```
+git config credential.'https://source.developers.google.com'.helper gcloud.sh
+```
+4*.e. The following makes initial commit for the repo.
+
+```
+git add .
+git commit -m "initial commit"
+```
+4*.f. Make your source repository to be the remote (named google).
+
+```
+git remote add google https://source.developers.google.com/p/raspberry-r-test/r/raspberry-webcam-repo
+```
+
+4*.g. Push your files to the source repository's master branch.
+```
+git push google master
+```
+
+4*.h. Create a service account and a secret key to it.
+
+```
+gcloud iam service-accounts create raspberry-pi-service-account --display-name "Raspberry Service Account"
+```
+```
+gcloud iam service-accounts keys create key.json --iam-account=raspberry-pi-service-account
+```
+
+4*.i. Copy the secret key to your Raspberry Pi and activate the service account.
+
+```
+scp key.json pi@raspberrypi.local:.
+ssh pi@raspberrypi.local gcloud auth activate-service-account --key-file=key.json
+
 ```
 
 **KEYWORDS:**
 
 *Raspbian* - operating system for all versions of Raspberry Pi.
 
-*SSH* - Secure Shell, a protocol for secured connection
-
-`some code here`
-
-```
-many lines of code here
-```
+*SSH* - Secure Shell, a protocol for secured connection.
